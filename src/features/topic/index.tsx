@@ -11,12 +11,13 @@ const Topic = () => {
     isError,
     isLoading,
   } = useQuery({
-    queryKey: ["todos"],
+    queryKey: ["topics"],
     queryFn: getTopic,
   });
 
   if (isLoading) return <div>loading...</div>;
 
+  // TODO - handle error
   if (isError) return <div>Error</div>;
 
   const topic = response?.data.content;

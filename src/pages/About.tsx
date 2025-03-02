@@ -21,8 +21,8 @@ const AboutPage = () => {
         }}
       >
         <About />
+        <Footer />
       </div>
-      <Footer customStyles={{ position: "fixed", bottom: "0" }} />
     </main>
   );
 };

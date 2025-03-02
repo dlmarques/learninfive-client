@@ -17,7 +17,10 @@ const ProgrammingLanguagesTabs = [
 
 const CodeExample = ({ examples }: { examples: TopicExample[] }) => {
   return (
-    <Card.Root size="sm" style={{ background: "#222222" }}>
+    <Card.Root
+      size="sm"
+      style={{ background: "#222222", overflowX: "auto", padding: "0 8px" }}
+    >
       <Tabs.Root defaultValue={examples[0].language} variant="plain">
         <Tabs.List>
           {ProgrammingLanguagesTabs.filter((tab) => {

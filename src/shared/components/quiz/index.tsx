@@ -5,7 +5,6 @@ import { Button } from "@chakra-ui/react";
 import { FaCircleXmark } from "react-icons/fa6";
 import { FaCheckCircle } from "react-icons/fa";
 
-// TODO - Finish Quiz
 const QuizComponent = ({ quiz }: { quiz: TopicQuiz }) => {
   const [value, setValue] = useState<string>();
   const [result, setResult] = useState<boolean>();
