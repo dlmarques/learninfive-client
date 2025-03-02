@@ -13,12 +13,12 @@
   width: 100vw;
 }
 
-.dark-theme {
+html[data-theme="dark"] {
   background-color: var(--darkModeBackground);
   color: var(--darkModeFont);
 }
 
-.light-theme {
+html[data-theme="light"] {
   background-color: var(--lightModeBackground);
   color: var(--lightModeFont);
 }

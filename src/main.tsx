@@ -10,27 +10,20 @@ import {
   createRoute,
   createRouter,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import "./styles/styles.css";
 import "./styles/fonts.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import TopicPage from "./pages/Topic.tsx";
 import About from "./pages/About.tsx";
-import { getTheme } from "./utils/getSystemTheme.ts";
-import { getCurrentThemeClass } from "./utils/getCurrentTheme.ts";
 import Provider from "./Provider.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
-if (!localStorage.getItem("theme")) {
-  let theme = getTheme();
-  localStorage.setItem("theme", theme);
-}
+import ThemeChanger from "./shared/components/theme-changer/index.tsx";
 
 const rootRoute = createRootRoute({
   component: () => (
-    <div className={`${getCurrentThemeClass()} app`}>
+    <div className={`app`}>
+      <ThemeChanger />
       <Outlet />
-      <TanStackRouterDevtools />
     </div>
   ),
 });

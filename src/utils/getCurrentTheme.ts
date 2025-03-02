@@ -1,5 +1,3 @@
-export const getCurrentThemeClass = () => {
-  const theme = localStorage.getItem("theme");
-  if (!theme) return "dark-theme";
+export const getCurrentThemeClass = (theme: string) => {
   return theme === "dark" ? "dark-theme" : "light-theme";
 };
