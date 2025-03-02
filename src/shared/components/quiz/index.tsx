@@ -1,6 +1,6 @@
 import type { TopicQuiz } from "@/types/Topic";
 import { useState } from "react";
-import { Radio, RadioGroup } from "../radio";
+import { Radio, RadioGroup } from "../radio/radio";
 import { Button } from "@chakra-ui/react";
 import { FaCircleXmark } from "react-icons/fa6";
 import { FaCheckCircle } from "react-icons/fa";
