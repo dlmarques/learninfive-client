@@ -1,3 +1,4 @@
+import Footer from "@/shared/components/footer";
 import React from "react";
 
 const Topic = React.lazy(() => import("../features/topic"));
@@ -20,6 +21,7 @@ const TopicPage = () => {
         }}
       >
         <Topic />
+        <Footer />
       </div>
     </main>
   );

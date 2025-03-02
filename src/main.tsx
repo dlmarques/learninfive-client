@@ -1,3 +1,6 @@
+// Copyright (c) 2025 Daniel Marques
+// Licensed under the GNU AGPL v3. See LICENSE.
+
 import { StrictMode, Suspense } from "react";
 import ReactDOM from "react-dom/client";
 import {
