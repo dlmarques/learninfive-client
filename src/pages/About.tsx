@@ -17,7 +17,7 @@ const AboutPage = () => {
     >
       <div
         style={{
-          width: "50vw",
+          width: "55vw",
         }}
       >
         <About />
