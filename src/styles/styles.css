@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap");
+
+:root {
+  --darkModeBackground: #121212;
+  --lightModeBackground: #f2f2f2;
+  --darkModeFont: #e6e6e6;
+  --lightModeFont: #1a1a1a;
+}
+
+.app {
+  height: 100vh;
+  width: 100vw;
+}
+
+.dark-theme {
+  background-color: var(--darkModeBackground);
+  color: var(--darkModeFont);
+}
+
+.light-theme {
+  background-color: var(--lightModeBackground);
+  color: var(--lightModeFont);
+}
