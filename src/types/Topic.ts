@@ -15,7 +15,7 @@ export interface TopicExample {
 export interface TopicQuiz {
   question: string;
   answers: TopicQuizAnswers[];
-  rightAnswerId: string;
+  rightAnswer: string;
 }
 
 interface TopicQuizAnswers {
