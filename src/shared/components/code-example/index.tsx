@@ -3,7 +3,7 @@ import { FaJava, FaJs, FaPython, FaPhp } from "react-icons/fa";
 import { TbBrandCSharp } from "react-icons/tb";
 import { SiCplusplus, SiTypescript } from "react-icons/si";
 import { CodeBlock } from "react-code-block";
-import type { TopicExample } from "@/types/Topic";
+import { Languages, type TopicExample } from "@/types/Topic";
 
 const ProgrammingLanguagesTabs = [
   { lang: "JavaScript", icon: <FaJs /> },
@@ -37,7 +37,10 @@ const CodeExample = ({ examples }: { examples: TopicExample[] }) => {
         {examples.map((example) => {
           return (
             <Tabs.Content value={example.language}>
-              <CodeBlock code={`${example.code}`} language="python">
+              <CodeBlock
+                code={`${example.code}`}
+                language={Languages[example.language]}
+              >
                 <CodeBlock.Code style={{ padding: "16px" }}>
                   <CodeBlock.LineContent>
                     <CodeBlock.Token />
