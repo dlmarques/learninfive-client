@@ -13,14 +13,40 @@ const Footer = ({ customStyles }: { customStyles?: React.CSSProperties }) => {
       }}
     >
       {pathname === "/" && (
-        <Link to="/about">
-          <p>Click here to visit about page</p>
-        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <p>Useful links:</p>
+          <Link to="/about">
+            <p>About</p>
+          </Link>
+          <p>|</p>
+          <Link to="/license">
+            <p>License</p>
+          </Link>
+        </div>
       )}
       {pathname === "/about" && (
-        <Link to="/">
-          <p>Click here to visit topic page</p>
-        </Link>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <p>Useful links:</p>
+          <Link to="/">
+            <p>Topic</p>
+          </Link>
+          <p>|</p>
+          <Link to="/license">
+            <p>License</p>
+          </Link>
+        </div>
+      )}
+      {pathname === "/license" && (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <p>Useful links:</p>
+          <Link to="/">
+            <p>Topic</p>
+          </Link>
+          <p>|</p>
+          <Link to="/about">
+            <p>About</p>
+          </Link>
+        </div>
       )}
       <p style={{ fontSize: "14px" }}>@2025 dlmarques</p>
     </div>
