@@ -4,6 +4,8 @@ import Examples from "./components/Examples";
 import Quiz from "./components/Quiz";
 import { useQuery } from "@tanstack/react-query";
 import { getTopic } from "./services/getTopic";
+import { Spinner } from "@chakra-ui/react";
+import { VscBracketError } from "react-icons/vsc";
 
 const Topic = () => {
   const {
@@ -15,10 +17,38 @@ const Topic = () => {
     queryFn: getTopic,
   });
 
-  if (isLoading) return <div>loading...</div>;
+  if (isLoading)
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "16px",
+        }}
+      >
+        <Spinner />
+        <h4>Ohhh no, the server is sleeping again, please wait a moment.</h4>
+      </div>
+    );
 
-  // TODO - handle error
-  if (isError) return <div>Error</div>;
+  if (isError)
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: "16px",
+        }}
+      >
+        <VscBracketError size="30px" />
+        <h4>
+          Sorry, something went wrong, we will try to fix it as soon as
+          possible.
+        </h4>
+      </div>
+    );
 
   const topic = response?.data.content;
 

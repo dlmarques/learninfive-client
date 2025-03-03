@@ -31,9 +31,17 @@ const ThemeChanger = () => {
   return (
     <div style={{ position: "absolute", left: "16px", top: "16px" }}>
       {theme === "dark" ? (
-        <LuSun onClick={() => onChangeTheme("light")} size={size} />
+        <LuSun
+          onClick={() => onChangeTheme("light")}
+          size={size}
+          style={{ cursor: "pointer" }}
+        />
       ) : (
-        <LuMoon onClick={() => onChangeTheme("dark")} size={size} />
+        <LuMoon
+          onClick={() => onChangeTheme("dark")}
+          size={size}
+          style={{ cursor: "pointer" }}
+        />
       )}
     </div>
   );

@@ -1,7 +1,23 @@
+import { Alert } from "@chakra-ui/react";
+
 const About = () => {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "64px" }}>
       <h1 style={{ textAlign: "center" }}>Learn in 5 minutes</h1>
+      <Alert.Root>
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>
+            <h6>Disclaimer:</h6>
+          </Alert.Title>
+          <Alert.Description>
+            <p style={{ fontSize: "16px" }}>
+              LearnInFive is sorry for any delay in loadings, for now, we are
+              using some services with free tiers.
+            </p>
+          </Alert.Description>
+        </Alert.Content>
+      </Alert.Root>
       <div>
         <p>
           Learn in 5 minutes is a simple AI powered project, the purpose is

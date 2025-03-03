@@ -15,6 +15,7 @@ import "./styles/fonts.css";
 import reportWebVitals from "./reportWebVitals.ts";
 import TopicPage from "./pages/Topic.tsx";
 import About from "./pages/About.tsx";
+import License from "./pages/License.tsx";
 import Provider from "./Provider.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ThemeChanger from "./shared/components/theme-changer/index.tsx";
@@ -40,7 +41,13 @@ const aboutRoute = createRoute({
   component: About,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, aboutRoute]);
+const licenseRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/license",
+  component: License,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute, aboutRoute, licenseRoute]);
 
 const router = createRouter({
   routeTree,
