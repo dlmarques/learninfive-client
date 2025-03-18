@@ -6,15 +6,22 @@ import { useQuery } from "@tanstack/react-query";
 import { getTopic } from "./services/getTopic";
 import { Spinner } from "@chakra-ui/react";
 import { VscBracketError } from "react-icons/vsc";
+import { useAuth } from "@clerk/clerk-react";
+import type { Topic } from "@/types/Topic";
 
 const Topic = () => {
+  const { getToken } = useAuth();
   const {
-    data: response,
+    data: topic,
     isError,
     isLoading,
   } = useQuery({
     queryKey: ["topics"],
-    queryFn: getTopic,
+    queryFn: async () => {
+      const token = await getToken();
+      const topicResponse = await getTopic(token);
+      return topicResponse.data.content as Topic;
+    },
   });
 
   if (isLoading)
@@ -49,8 +56,6 @@ const Topic = () => {
         </h4>
       </div>
     );
-
-  const topic = response?.data.content;
 
   return (
     <>
