@@ -1,29 +1,13 @@
-import Footer from "@/shared/components/footer";
+import BaseLayout from "@/shared/layouts/Base";
 import React from "react";
 
 const Topic = React.lazy(() => import("../features/topic"));
 
 const TopicPage = () => {
   return (
-    <main
-      style={{
-        padding: "32px",
-        maxHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        overflowY: "auto",
-        overflowX: "hidden",
-      }}
-    >
-      <div
-        style={{
-          width: "50vw",
-        }}
-      >
-        <Topic />
-        <Footer />
-      </div>
-    </main>
+    <BaseLayout>
+      <Topic />
+    </BaseLayout>
   );
 };
 

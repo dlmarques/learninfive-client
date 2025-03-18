@@ -1,4 +1,3 @@
-import type { UserProfileOutputDto } from "@/types/UserProfile";
 import { Textarea } from "@chakra-ui/react";
 
 interface FormTextAreaProps {
@@ -8,6 +7,7 @@ interface FormTextAreaProps {
   placeholder: string;
   onChange: any;
   required?: boolean;
+  value?: string;
 }
 
 const FormTextArea = ({ ...textAreaConfig }: FormTextAreaProps) => {
@@ -22,6 +22,7 @@ const FormTextArea = ({ ...textAreaConfig }: FormTextAreaProps) => {
         id={textAreaConfig.id}
         placeholder={textAreaConfig.placeholder}
         onChange={textAreaConfig.onChange}
+        value={textAreaConfig.value}
       />
     </div>
   );
