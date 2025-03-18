@@ -29,7 +29,7 @@ const ThemeChanger = () => {
   }, []);
 
   return (
-    <div style={{ position: "absolute", left: "16px", top: "16px" }}>
+    <div>
       {theme === "dark" ? (
         <LuSun
           onClick={() => onChangeTheme("light")}

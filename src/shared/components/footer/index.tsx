@@ -24,6 +24,38 @@ const Footer = ({ customStyles }: { customStyles?: React.CSSProperties }) => {
           </Link>
         </div>
       )}
+      {pathname === "/sign-in" && (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <p>Useful links:</p>
+          <Link to="/">
+            <p>Topic</p>
+          </Link>
+          <p>|</p>
+          <Link to="/about">
+            <p>About</p>
+          </Link>
+          <p>|</p>
+          <Link to="/license">
+            <p>License</p>
+          </Link>
+        </div>
+      )}
+      {pathname === "/sign-up" && (
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <p>Useful links:</p>
+          <Link to="/">
+            <p>Topic</p>
+          </Link>
+          <p>|</p>
+          <Link to="/about">
+            <p>About</p>
+          </Link>
+          <p>|</p>
+          <Link to="/license">
+            <p>License</p>
+          </Link>
+        </div>
+      )}
       {pathname === "/about" && (
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <p>Useful links:</p>

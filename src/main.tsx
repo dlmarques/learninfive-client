@@ -9,6 +9,7 @@ import {
   createRootRoute,
   createRoute,
   createRouter,
+  redirect,
 } from "@tanstack/react-router";
 import "./styles/styles.css";
 import "./styles/fonts.css";
@@ -19,11 +20,49 @@ import License from "./pages/License.tsx";
 import Provider from "./Provider.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ThemeChanger from "./shared/components/theme-changer/index.tsx";
+import {
+  ClerkProvider,
+  SignedIn,
+  SignedOut,
+  useAuth,
+  UserButton,
+} from "@clerk/clerk-react";
+import { Button } from "@chakra-ui/react";
+import SignInPage from "./pages/SignIn.tsx";
+import SignUpPage from "./pages/SignUp.tsx";
+import CompleteProfilePage from "./pages/CompleteProfile.tsx";
+import { isUserProfileCompleted } from "./utils/isUserProfileCompleted.ts";
+import { Toaster } from "react-hot-toast";
+
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+
+if (!PUBLISHABLE_KEY) {
+  throw new Error("Missing Publishable Key");
+}
 
 const rootRoute = createRootRoute({
   component: () => (
     <div className={`app`}>
-      <ThemeChanger />
+      <div
+        style={{
+          position: "absolute",
+          left: "16px",
+          top: "16px",
+          display: "flex",
+          alignItems: "center",
+          gap: "16px",
+        }}
+      >
+        <ThemeChanger />
+        <SignedIn>
+          <UserButton />
+        </SignedIn>
+        <SignedOut>
+          <Button onClick={() => window.location.assign("/sign-in")}>
+            <p style={{ fontSize: "14px", fontWeight: "500" }}>Sign in</p>
+          </Button>
+        </SignedOut>
+      </div>
       <Outlet />
     </div>
   ),
@@ -32,7 +71,43 @@ const rootRoute = createRootRoute({
 const indexRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
+  beforeLoad: async ({ context }: { context: any }) => {
+    const token = await context.token();
+    if (token) {
+      const hasCompletedProfile = await isUserProfileCompleted(token);
+      if (!hasCompletedProfile) {
+        return redirect({ to: "/complete-profile" });
+      }
+    }
+  },
   component: TopicPage,
+});
+
+const singInRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/sign-in",
+  component: SignInPage,
+});
+
+const signUpRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/sign-up",
+  component: SignUpPage,
+});
+
+const completeProfileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/complete-profile",
+  beforeLoad: async ({ context }: { context: any }) => {
+    const token = await context.token();
+    if (token) {
+      const hasCompletedProfile = await isUserProfileCompleted(token);
+      if (hasCompletedProfile) {
+        return redirect({ to: "/" });
+      }
+    }
+  },
+  component: CompleteProfilePage,
 });
 
 const aboutRoute = createRoute({
@@ -47,7 +122,14 @@ const licenseRoute = createRoute({
   component: License,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, aboutRoute, licenseRoute]);
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  singInRoute,
+  signUpRoute,
+  completeProfileRoute,
+  aboutRoute,
+  licenseRoute,
+]);
 
 const router = createRouter({
   routeTree,
@@ -64,20 +146,41 @@ declare module "@tanstack/react-router" {
 
 const queryClient = new QueryClient();
 
-const rootElement = document.getElementById("app")!;
-if (!rootElement.innerHTML) {
-  const root = ReactDOM.createRoot(rootElement);
-  root.render(
+const WrappedRouter = () => {
+  const { getToken } = useAuth();
+  return (
+    <RouterProvider
+      router={router}
+      context={{
+        token: async () => {
+          return await getToken();
+        },
+      }}
+    />
+  );
+};
+
+const App = () => {
+  return (
     <StrictMode>
       <Provider>
         <QueryClientProvider client={queryClient}>
-          <Suspense fallback={<div>loading...</div>}>
-            <RouterProvider router={router} />
-          </Suspense>
+          <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+            <Suspense fallback={<div>loading...</div>}>
+              <WrappedRouter />
+              <Toaster />
+            </Suspense>
+          </ClerkProvider>
         </QueryClientProvider>
       </Provider>
     </StrictMode>
   );
+};
+
+const rootElement = document.getElementById("app")!;
+if (!rootElement.innerHTML) {
+  const root = ReactDOM.createRoot(rootElement);
+  root.render(<App />);
 }
 
 // If you want to start measuring performance in your app, pass a function
