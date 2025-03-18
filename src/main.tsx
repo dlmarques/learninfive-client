@@ -33,6 +33,8 @@ import SignUpPage from "./pages/SignUp.tsx";
 import CompleteProfilePage from "./pages/CompleteProfile.tsx";
 import { isUserProfileCompleted } from "./utils/isUserProfileCompleted.ts";
 import { Toaster } from "react-hot-toast";
+import { FaEdit } from "react-icons/fa";
+import EditProfilePreferencesPage from "./pages/EditProfilePreferences.tsx";
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -55,7 +57,17 @@ const rootRoute = createRootRoute({
       >
         <ThemeChanger />
         <SignedIn>
-          <UserButton />
+          <UserButton>
+            <UserButton.MenuItems>
+              <UserButton.Action
+                label="Edit profile preferences"
+                labelIcon={<FaEdit />}
+                onClick={() => {
+                  window.location.assign("/edit-profile-preferences");
+                }}
+              />
+            </UserButton.MenuItems>
+          </UserButton>
         </SignedIn>
         <SignedOut>
           <Button onClick={() => window.location.assign("/sign-in")}>
@@ -110,6 +122,21 @@ const completeProfileRoute = createRoute({
   component: CompleteProfilePage,
 });
 
+const editProfilePreferencesRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/edit-profile-preferences",
+  beforeLoad: async ({ context }: { context: any }) => {
+    const token = await context.token();
+    if (token) {
+      const hasCompletedProfile = await isUserProfileCompleted(token);
+      if (!hasCompletedProfile) {
+        return redirect({ to: "/complete-profile" });
+      }
+    }
+  },
+  component: EditProfilePreferencesPage,
+});
+
 const aboutRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/about",
@@ -127,6 +154,7 @@ const routeTree = rootRoute.addChildren([
   singInRoute,
   signUpRoute,
   completeProfileRoute,
+  editProfilePreferencesRoute,
   aboutRoute,
   licenseRoute,
 ]);

@@ -1,29 +1,13 @@
-import Footer from "@/shared/components/footer";
+import BaseLayout from "@/shared/layouts/Base";
 import React from "react";
 
 const CompleteProfile = React.lazy(() => import("@/features/complete-profile"));
 
 const CompleteProfilePage = () => {
   return (
-    <main
-      style={{
-        padding: "32px",
-        maxHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        overflowY: "auto",
-        overflowX: "hidden",
-      }}
-    >
-      <div
-        style={{
-          width: "50vw",
-        }}
-      >
-        <CompleteProfile />
-        <Footer />
-      </div>
-    </main>
+    <BaseLayout>
+      <CompleteProfile />
+    </BaseLayout>
   );
 };
 
