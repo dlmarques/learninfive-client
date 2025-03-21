@@ -22,18 +22,18 @@ if (!PUBLISHABLE_KEY) {
 
 setupInterceptors();
 
+declare module "@tanstack/react-router" {
+  interface Register {
+    router: typeof router;
+  }
+}
+
 const router = createRouter({
   routeTree,
   defaultPreload: "intent",
   scrollRestoration: true,
   defaultStructuralSharing: true,
 });
-
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
-}
 
 const queryClient = new QueryClient();
 

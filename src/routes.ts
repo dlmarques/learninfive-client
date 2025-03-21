@@ -6,8 +6,8 @@ import SignInPage from "./pages/SignIn";
 import SignUpPage from "./pages/SignUp";
 import CompleteProfilePage from "./pages/CompleteProfile";
 import EditProfilePreferencesPage from "./pages/EditProfilePreferences";
-import About from "./features/about";
-import License from "./features/license";
+import About from "./pages/About";
+import License from "./pages/License";
 import ErrorPage from "./pages/Error";
 
 const rootRoute = createRootRoute({
