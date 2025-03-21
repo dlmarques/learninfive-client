@@ -13,7 +13,6 @@ export const useCompleteProfile = () => {
     if (userId) {
       const token = await getToken();
       if (token) {
-        debugger;
         const response = await completeProfile({ ...data, userId }, token);
 
         if (response.data.success) {

@@ -11,6 +11,7 @@ import type { Topic } from "@/types/Topic";
 
 const Topic = () => {
   const { getToken } = useAuth();
+
   const {
     data: topic,
     isError,
@@ -22,6 +23,8 @@ const Topic = () => {
       const topicResponse = await getTopic(token);
       return topicResponse.data.content as Topic;
     },
+    retry: 24,
+    retryDelay: () => 5000,
   });
 
   if (isLoading)
@@ -65,7 +68,7 @@ const Topic = () => {
           <Definition concept={topic.concept} defintion={topic.definition} />
           <Analogy analogy={topic.realWorldAnalogy} />
           <Examples examples={topic.examples} />
-          <Quiz quiz={topic.quiz} />
+          <Quiz quiz={topic.quiz} topicId={topic.id} />
         </div>
       )}
     </>

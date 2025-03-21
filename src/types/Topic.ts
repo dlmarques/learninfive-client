@@ -1,4 +1,5 @@
 export interface Topic {
+  id: string;
   concept: string;
   definition: string;
   realWorldAnalogy: string;
@@ -20,9 +21,11 @@ export interface TopicExample {
 }
 
 export interface TopicQuiz {
+  id: string;
   question: string;
   answers: TopicQuizAnswers[];
   rightAnswer: string;
+  userAnswer?: boolean;
 }
 
 interface TopicQuizAnswers {

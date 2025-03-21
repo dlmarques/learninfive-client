@@ -53,18 +53,16 @@ const WrappedRouter = () => {
 
 const App = () => {
   return (
-    <StrictMode>
-      <Provider>
-        <QueryClientProvider client={queryClient}>
-          <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
-            <Suspense fallback={<div>loading...</div>}>
-              <WrappedRouter />
-              <Toaster />
-            </Suspense>
-          </ClerkProvider>
-        </QueryClientProvider>
-      </Provider>
-    </StrictMode>
+    <Provider>
+      <QueryClientProvider client={queryClient}>
+        <ClerkProvider publishableKey={PUBLISHABLE_KEY}>
+          <Suspense fallback={<div>loading...</div>}>
+            <WrappedRouter />
+            <Toaster />
+          </Suspense>
+        </ClerkProvider>
+      </QueryClientProvider>
+    </Provider>
   );
 };
 
