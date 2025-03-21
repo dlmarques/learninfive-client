@@ -1,41 +1,74 @@
 import type { TopicQuiz } from "@/types/Topic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Radio, RadioGroup } from "../radio/radio";
-import { Button } from "@chakra-ui/react";
-import { FaCircleXmark } from "react-icons/fa6";
-import { FaCheckCircle } from "react-icons/fa";
+import { Button, Spinner } from "@chakra-ui/react";
+import { useUser } from "@clerk/clerk-react";
+import Result from "./components/Result";
 
-const QuizComponent = ({ quiz }: { quiz: TopicQuiz }) => {
-  const [value, setValue] = useState<string>();
+const QuizComponent = ({
+  quiz,
+  onAnswer,
+}: {
+  quiz: TopicQuiz;
+  onAnswer: (answer: string) => Promise<{
+    success: boolean;
+    content: string;
+    correct: boolean;
+  }>;
+}) => {
+  const [value, setValue] = useState<string>("");
   const [result, setResult] = useState<boolean>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isAlreadyPlayed, setIsAlreadyPlayed] = useState<boolean>(false);
+  const { isSignedIn } = useUser();
 
-  const onAnswer = () => {
-    debugger;
-    localStorage.setItem("alreadyPlayed", "true");
-    if (quiz.rightAnswer === value) {
-      localStorage.setItem("quizResult", "win");
-      setResult(true);
+  const getAlreadyPlayed = () => {
+    if (result !== undefined) return setIsAlreadyPlayed(true);
+
+    if (isSignedIn) {
+      return setIsAlreadyPlayed(quiz.userAnswer !== undefined);
     } else {
-      localStorage.setItem("quizResult", "lose");
-      setResult(false);
+      const pastPlayedQuizzes = localStorage.getItem("pastPlayedQuizzes");
+      if (pastPlayedQuizzes) {
+        const pastPlayedQuizzesArray = JSON.parse(pastPlayedQuizzes);
+        return setIsAlreadyPlayed(pastPlayedQuizzesArray.includes(quiz.id));
+      }
+      return setIsAlreadyPlayed(false);
     }
   };
 
-  const getAlreadyPlayed = () => {
-    const alreadyPlayed = localStorage.getItem("alreadyPlayed");
-    return alreadyPlayed === "true";
+  const getQuizResult = () => {
+    if (result !== undefined) return result;
+    if (isSignedIn) {
+      if (quiz.userAnswer !== undefined) {
+        return quiz.userAnswer;
+      }
+    } else {
+      const pastPlayedQuizzes = localStorage.getItem("pastPlayedQuizzes");
+      if (pastPlayedQuizzes) {
+        const pastPlayedQuizzesArray = JSON.parse(pastPlayedQuizzes);
+        return pastPlayedQuizzesArray.find(
+          (quiz: TopicQuiz) => quiz.id === quiz.id
+        ).isCorrect;
+      }
+    }
   };
 
-  const getQuizResult = () => {
-    if (typeof result === "boolean") return result;
-    const quizResult = localStorage.getItem("quizResult");
-    if (quizResult) return quizResult === "win" ? true : false;
+  const getCorrectAnswer = () => {
+    const index = quiz.answers.findIndex(
+      (answer) => answer.id === quiz.rightAnswer
+    );
+    return quiz.answers[index].content;
   };
+
+  useEffect(() => {
+    getAlreadyPlayed();
+  }, [result]);
 
   return (
     <div>
       <h5>{quiz.question}</h5>
-      {!getAlreadyPlayed() && (
+      {!isAlreadyPlayed ? (
         <div
           style={{
             paddingTop: "16px",
@@ -65,35 +98,28 @@ const QuizComponent = ({ quiz }: { quiz: TopicQuiz }) => {
               );
             })}
           </RadioGroup>
-          <Button onClick={() => onAnswer()}>Submit</Button>
-        </div>
-      )}
+          <Button
+            disabled={!value}
+            onClick={async () => {
+              setIsLoading(true);
+              if (value) {
+                const result = await onAnswer(value);
+                setIsLoading(false);
 
-      {getAlreadyPlayed() && getQuizResult() && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            paddingTop: "16px",
-          }}
-        >
-          <FaCheckCircle size="30px" color="#5cb85c" />
-          <h3>Correct!</h3>
+                if (result.success) {
+                  setResult(result.correct);
+                }
+              }
+            }}
+          >
+            {isLoading ? <Spinner /> : "Submit"}
+          </Button>
         </div>
-      )}
-      {getAlreadyPlayed() && !getQuizResult() && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "16px",
-            paddingTop: "16px",
-          }}
-        >
-          <FaCircleXmark size="30px" color="#ff2c2c" />
-          <h3>Wrong!</h3>
-        </div>
+      ) : (
+        <Result
+          result={result ?? getQuizResult()}
+          getCorrectAnswer={getCorrectAnswer}
+        />
       )}
     </div>
   );
