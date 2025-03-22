@@ -1,29 +1,13 @@
-import Footer from "@/shared/components/footer";
+import BaseLayout from "@/shared/layouts/Base";
 import React from "react";
 
 const About = React.lazy(() => import("../features/about"));
 
 const AboutPage = () => {
   return (
-    <main
-      style={{
-        padding: "32px",
-        maxHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        overflowY: "auto",
-        overflowX: "hidden",
-      }}
-    >
-      <div
-        style={{
-          width: "55vw",
-        }}
-      >
-        <About />
-        <Footer />
-      </div>
-    </main>
+    <BaseLayout>
+      <About />
+    </BaseLayout>
   );
 };
 

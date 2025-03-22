@@ -1,7 +1,8 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { useFooterLinks } from "@/shared/hooks/useFooterLinks";
 
 const Footer = ({ customStyles }: { customStyles?: React.CSSProperties }) => {
-  const { pathname } = useLocation();
+  const footerLinks = useFooterLinks();
+
   return (
     <div
       style={{
@@ -12,42 +13,7 @@ const Footer = ({ customStyles }: { customStyles?: React.CSSProperties }) => {
         ...customStyles,
       }}
     >
-      {pathname === "/" && (
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <p>Useful links:</p>
-          <Link to="/about">
-            <p>About</p>
-          </Link>
-          <p>|</p>
-          <Link to="/license">
-            <p>License</p>
-          </Link>
-        </div>
-      )}
-      {pathname === "/about" && (
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <p>Useful links:</p>
-          <Link to="/">
-            <p>Topic</p>
-          </Link>
-          <p>|</p>
-          <Link to="/license">
-            <p>License</p>
-          </Link>
-        </div>
-      )}
-      {pathname === "/license" && (
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <p>Useful links:</p>
-          <Link to="/">
-            <p>Topic</p>
-          </Link>
-          <p>|</p>
-          <Link to="/about">
-            <p>About</p>
-          </Link>
-        </div>
-      )}
+      {footerLinks}
       <p style={{ fontSize: "14px" }}>@2025 dlmarques</p>
     </div>
   );

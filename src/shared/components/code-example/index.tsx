@@ -30,7 +30,11 @@ const CodeExample = ({ examples }: { examples: TopicExample[] }) => {
             if (exists) return tab;
           }).map((tab) => {
             return (
-              <Tabs.Trigger value={tab.lang} style={{ color: "#e6e6e6" }}>
+              <Tabs.Trigger
+                key={tab.lang}
+                value={tab.lang}
+                style={{ color: "#e6e6e6" }}
+              >
                 {tab.icon}
                 {tab.lang}
               </Tabs.Trigger>
