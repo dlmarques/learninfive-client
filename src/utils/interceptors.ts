@@ -3,9 +3,21 @@ import { queryByError } from "./pathByError";
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_API_URL,
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 export const setupInterceptors = () => {
+  axiosInstance.interceptors.request.use(async (config) => {
+    config.headers["X-CSRF-TOKEN"] = document
+      .querySelector('meta[name="csrf-token"]')
+      ?.getAttribute("content");
+
+    return config;
+  });
+
   axiosInstance.interceptors.response.use(
     (response) => {
       return response;
