@@ -1,5 +1,6 @@
 import React from "react";
 import Footer from "../components/footer";
+import "./styles/base.css";
 
 const BaseLayout = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -13,11 +14,7 @@ const BaseLayout = ({ children }: { children: React.ReactNode }) => {
         overflowX: "hidden",
       }}
     >
-      <div
-        style={{
-          width: "55vw",
-        }}
-      >
+      <div className="main-content">
         {children}
         <Footer />
       </div>
