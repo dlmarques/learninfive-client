@@ -1,0 +1,6 @@
+.main-content {
+  width: 55vw;
+  @media (max-width: 425px) {
+    width: 70vw;
+  }
+}

@@ -16,6 +16,7 @@ const App = () => {
           alignItems: "center",
           gap: "16px",
         }}
+        className="menu"
       >
         <ThemeChanger />
         <SignedIn>
