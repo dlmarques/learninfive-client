@@ -7,6 +7,6 @@ interface ThemeStore {
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({
-  theme: getTheme(),
+  theme: localStorage.getItem("theme") || getTheme(),
   setTheme: (theme: string) => set(() => ({ theme: theme })),
 }));
