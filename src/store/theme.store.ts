@@ -1,3 +1,4 @@
+import { getTheme } from "@/utils/getSystemTheme";
 import { create } from "zustand";
 
 interface ThemeStore {
@@ -6,6 +7,6 @@ interface ThemeStore {
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({
-  theme: "dark",
+  theme: getTheme(),
   setTheme: (theme: string) => set(() => ({ theme: theme })),
 }));
