@@ -15,16 +15,51 @@ const ProgrammingLanguagesTabs = [
   { lang: "PHP", icon: <FaPhp /> },
 ];
 
+const LanguageAliases: Array<{
+  canonical: TopicExample["language"];
+  aliases: string[];
+}> = [
+  { canonical: "TypeScript", aliases: ["typescript"] },
+  {
+    canonical: "JavaScript",
+    aliases: ["javascript", "node.js", "nodejs", "node"],
+  },
+  { canonical: "Python", aliases: ["python"] },
+  { canonical: "C#", aliases: ["c#", "csharp", ".net", "dotnet"] },
+  { canonical: "C++", aliases: ["c++", "cplusplus", "cpp"] },
+  { canonical: "PHP", aliases: ["php"] },
+  { canonical: "Java", aliases: ["java"] },
+];
+
+const normalizeLanguage = (
+  language: string
+): TopicExample["language"] | undefined => {
+  const lower = language.toLowerCase();
+  for (const { canonical, aliases } of LanguageAliases) {
+    if (aliases.some((alias) => lower.includes(alias))) return canonical;
+  }
+  return undefined;
+};
+
 const CodeExample = ({ examples }: { examples: TopicExample[] }) => {
+  const normalizedExamples = examples
+    .map((example) => {
+      const language = normalizeLanguage(example.language);
+      return language ? { ...example, language } : null;
+    })
+    .filter((example): example is TopicExample => example !== null);
+
+  if (normalizedExamples.length === 0) return null;
+
   return (
     <Card.Root
       size="sm"
       style={{ background: "#222222", overflowX: "auto", padding: "0 8px" }}
     >
-      <Tabs.Root defaultValue={examples[0].language} variant="plain">
+      <Tabs.Root defaultValue={normalizedExamples[0].language} variant="plain">
         <Tabs.List>
           {ProgrammingLanguagesTabs.filter((tab) => {
-            const exists = examples.some(
+            const exists = normalizedExamples.some(
               (example) => example.language === tab.lang
             );
             if (exists) return tab;
@@ -41,7 +76,7 @@ const CodeExample = ({ examples }: { examples: TopicExample[] }) => {
             );
           })}
         </Tabs.List>
-        {examples.map((example) => {
+        {normalizedExamples.map((example) => {
           return (
             <Tabs.Content value={example.language}>
               <CodeBlock
