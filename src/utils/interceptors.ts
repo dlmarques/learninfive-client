@@ -25,9 +25,9 @@ export const setupInterceptors = () => {
     (error) => {
       const statusCode = error.status;
       const query = queryByError(statusCode);
-      localStorage.setItem("error", error);
+      localStorage.setItem("error", query);
       if (error.response.data.content !== "Topic in progress") {
-        // window.location.assign("/error");
+        window.location.assign("/error");
       }
     }
   );
