@@ -96,13 +96,13 @@ describe('Interceptors', () => {
             expect(result).toEqual(mockResponse);
         });
 
-        it('should handle error response and redirect to error page', () => {
+        it('should handle error response and redirect to error page', async () => {
             setupInterceptors();
 
             // Get the response error handler
             const errorHandler = vi.mocked(axiosInstance.interceptors.response.use).mock.calls[0][1] as (
                 error: any
-            ) => void;
+            ) => Promise<never>;
 
             const mockError = {
                 status: 500,
@@ -115,20 +115,20 @@ describe('Interceptors', () => {
 
             vi.mocked(queryByError).mockReturnValue('unexpected');
 
-            errorHandler(mockError);
+            await expect(errorHandler(mockError)).rejects.toEqual(mockError);
 
             expect(queryByError).toHaveBeenCalledWith(500);
             expect(localStorage.setItem).toHaveBeenCalledWith('error', 'unexpected');
             expect(window.location.assign).toHaveBeenCalledWith('/error');
         });
 
-        it('should not redirect if error content is "Topic in progress"', () => {
+        it('should not redirect if error content is "Topic in progress"', async () => {
             setupInterceptors();
 
             // Get the response error handler
             const errorHandler = vi.mocked(axiosInstance.interceptors.response.use).mock.calls[0][1] as (
                 error: any
-            ) => void;
+            ) => Promise<never>;
 
             const mockError = {
                 status: 500,
@@ -141,11 +141,31 @@ describe('Interceptors', () => {
 
             vi.mocked(queryByError).mockReturnValue('unexpected');
 
-            errorHandler(mockError);
+            await expect(errorHandler(mockError)).rejects.toEqual(mockError);
 
             expect(queryByError).toHaveBeenCalledWith(500);
             expect(localStorage.setItem).toHaveBeenCalledWith('error', 'unexpected');
             expect(window.location.assign).not.toHaveBeenCalled();
+        });
+
+        it('should handle network errors without a response', async () => {
+            setupInterceptors();
+
+            const errorHandler = vi.mocked(axiosInstance.interceptors.response.use).mock.calls[0][1] as (
+                error: any
+            ) => Promise<never>;
+
+            const mockError = {
+                message: 'Network Error'
+            };
+
+            vi.mocked(queryByError).mockReturnValue('unexpected');
+
+            await expect(errorHandler(mockError)).rejects.toEqual(mockError);
+
+            expect(queryByError).toHaveBeenCalledWith(500);
+            expect(localStorage.setItem).toHaveBeenCalledWith('error', 'unexpected');
+            expect(window.location.assign).toHaveBeenCalledWith('/error');
         });
     });
 });
