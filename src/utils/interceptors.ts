@@ -23,12 +23,16 @@ export const setupInterceptors = () => {
       return response;
     },
     (error) => {
-      const statusCode = error.status;
+      const statusCode = error.response?.status ?? error.status ?? 500;
       const query = queryByError(statusCode);
+      const content = error.response?.data?.content;
+
       localStorage.setItem("error", query);
-      if (error.response.data.content !== "Topic in progress") {
+      if (content !== "Topic in progress") {
         window.location.assign("/error");
       }
+
+      return Promise.reject(error);
     }
   );
 };

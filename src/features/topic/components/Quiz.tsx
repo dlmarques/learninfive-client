@@ -4,10 +4,12 @@ import { useAuth } from "@clerk/clerk-react";
 import { answerQuiz } from "../services/answer";
 import toast from "react-hot-toast";
 import { redirect } from "@tanstack/react-router";
+import { upsertGuestQuizAttempt } from "@/shared/components/quiz/utils/guestQuizAttempts";
 
 const Quiz = ({ quiz, topicId }: { quiz: TopicQuiz; topicId: string }) => {
   const { getToken } = useAuth();
   const { isSignedIn } = useAuth();
+  const guestReplayId = quiz.id || topicId;
 
   const onAnswer = async (answer: string) => {
     const token = await getToken();
@@ -26,26 +28,15 @@ const Quiz = ({ quiz, topicId }: { quiz: TopicQuiz; topicId: string }) => {
       }
     } else {
       const response = await answerQuiz(answer, topicId);
-      const playedQuiz = {
-        id: quiz.id,
-        correct: response.data.correct,
-      };
-      const pastPlayedQuizzes = localStorage.getItem("pastPlayedQuizzes");
-      if (pastPlayedQuizzes) {
-        const pastPlayedQuizzesArray = JSON.parse(pastPlayedQuizzes);
 
-        if (response.data.success) {
-          pastPlayedQuizzesArray.push(playedQuiz);
-          localStorage.setItem(
-            "pastPlayedQuizzes",
-            JSON.stringify(pastPlayedQuizzesArray)
-          );
-          return response.data;
-        } else {
-          toast.error("Something went wrong.");
-        }
+      if (response.data.success) {
+        upsertGuestQuizAttempt({
+          id: guestReplayId,
+          correct: response.data.correct,
+        });
+        return response.data;
       } else {
-        localStorage.setItem("pastPlayedQuizzes", JSON.stringify([playedQuiz]));
+        toast.error("Something went wrong.");
       }
     }
   };
@@ -53,7 +44,11 @@ const Quiz = ({ quiz, topicId }: { quiz: TopicQuiz; topicId: string }) => {
   return (
     <div style={{ paddingBottom: "32px" }}>
       <h3>Quiz</h3>
-      <QuizComponent quiz={quiz} onAnswer={onAnswer} />
+      <QuizComponent
+        guestReplayId={guestReplayId}
+        quiz={quiz}
+        onAnswer={onAnswer}
+      />
     </div>
   );
 };

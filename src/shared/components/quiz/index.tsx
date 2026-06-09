@@ -4,18 +4,27 @@ import { Radio, RadioGroup } from "../radio/radio";
 import { Button, Spinner } from "@chakra-ui/react";
 import { useUser } from "@clerk/clerk-react";
 import Result from "./components/Result";
+import { findGuestQuizAttempt } from "./utils/guestQuizAttempts";
 
-const QuizComponent = ({
-  quiz,
-  onAnswer,
-}: {
+type QuizComponentProps = {
+  /**
+   * Stable key for anonymous replay lookup.
+   * Uses the topic id when older public topics do not have a quiz id.
+   */
+  guestReplayId: string;
   quiz: TopicQuiz;
   onAnswer: (answer: string) => Promise<{
     success: boolean;
     content: string;
     correct: boolean;
   }>;
-}) => {
+};
+
+const QuizComponent = ({
+  guestReplayId,
+  quiz,
+  onAnswer,
+}: QuizComponentProps) => {
   const [value, setValue] = useState<string>("");
   const [result, setResult] = useState<boolean>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -28,12 +37,9 @@ const QuizComponent = ({
     if (isSignedIn) {
       return setIsAlreadyPlayed(quiz.userAnswer !== undefined);
     } else {
-      const pastPlayedQuizzes = localStorage.getItem("pastPlayedQuizzes");
-      if (pastPlayedQuizzes) {
-        const pastPlayedQuizzesArray = JSON.parse(pastPlayedQuizzes);
-        return setIsAlreadyPlayed(pastPlayedQuizzesArray.includes(quiz.id));
-      }
-      return setIsAlreadyPlayed(false);
+      return setIsAlreadyPlayed(
+        findGuestQuizAttempt(guestReplayId) !== undefined
+      );
     }
   };
 
@@ -44,13 +50,7 @@ const QuizComponent = ({
         return quiz.userAnswer;
       }
     } else {
-      const pastPlayedQuizzes = localStorage.getItem("pastPlayedQuizzes");
-      if (pastPlayedQuizzes) {
-        const pastPlayedQuizzesArray = JSON.parse(pastPlayedQuizzes);
-        return pastPlayedQuizzesArray.find(
-          (quiz: TopicQuiz) => quiz.id === quiz.id
-        ).isCorrect;
-      }
+      return findGuestQuizAttempt(guestReplayId)?.correct;
     }
   };
 
@@ -63,7 +63,9 @@ const QuizComponent = ({
 
   useEffect(() => {
     getAlreadyPlayed();
-  }, [result]);
+  }, [guestReplayId, isSignedIn, quiz.userAnswer, result]);
+
+  const quizResult = result ?? getQuizResult();
 
   return (
     <div>
@@ -116,10 +118,9 @@ const QuizComponent = ({
           </Button>
         </div>
       ) : (
-        <Result
-          result={result ?? getQuizResult()}
-          getCorrectAnswer={getCorrectAnswer}
-        />
+        quizResult !== undefined && (
+          <Result result={quizResult} getCorrectAnswer={getCorrectAnswer} />
+        )
       )}
     </div>
   );
