@@ -1,9 +1,12 @@
+import type { Topic } from "@/types/Topic";
 import { axiosInstance } from "@/utils/interceptors";
 
 export const getTopic = async (token?: string | null) => {
-  return axiosInstance.get(`topics/get-topic`, {
-    headers: {
-      Authorization: token && `Bearer ${token}`,
-    },
+  if (!token) {
+    return axiosInstance.get<Topic>("topics/today");
+  }
+
+  return axiosInstance.get<Topic>("me/topics/today", {
+    headers: { Authorization: `Bearer ${token}` },
   });
 };

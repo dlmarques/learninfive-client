@@ -1,11 +1,11 @@
-import type { UserProfileOutputDto } from "@/types/UserProfile";
+import type { UserProfileRequestDto } from "@/types/UserProfile";
 import { axiosInstance } from "@/utils/interceptors";
 
 export const completeProfile = async (
-  data: UserProfileOutputDto,
+  data: UserProfileRequestDto,
   token: string
 ) => {
-  return axiosInstance.post(`users/complete-profile`, data, {
+  return axiosInstance.post("me/profile", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

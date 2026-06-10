@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { axiosInstance, setupInterceptors } from '../interceptors';
+import { axiosInstance, buildApiBaseUrl, setupInterceptors } from '../interceptors';
 import { queryByError } from '../pathByError';
 import type { AxiosResponse, InternalAxiosRequestConfig, AxiosRequestHeaders } from 'axios';
 
@@ -19,7 +19,10 @@ vi.mock('axios', () => {
             }
         }
     };
-    return { default: mockAxios };
+    return {
+        default: mockAxios,
+        isAxiosError: vi.fn((error) => Boolean(error?.isAxiosError))
+    };
 });
 
 describe('Interceptors', () => {
@@ -33,7 +36,7 @@ describe('Interceptors', () => {
         document.head.appendChild(mockMetaElement);
 
         // Mock localStorage
-        vi.spyOn(Storage.prototype, 'setItem');
+        vi.spyOn(localStorage, 'setItem');
 
         // Mock window.location.assign
         const assignMock = vi.fn();
@@ -48,6 +51,11 @@ describe('Interceptors', () => {
     });
 
     describe('Setup Interceptors', () => {
+        it('should append the versioned API path to the backend base URL', () => {
+            expect(buildApiBaseUrl('https://api.example.com')).toBe('https://api.example.com/api/v1');
+            expect(buildApiBaseUrl('https://api.example.com/')).toBe('https://api.example.com/api/v1');
+        });
+
         it('should set up request and response interceptors', () => {
             setupInterceptors();
 
@@ -83,7 +91,7 @@ describe('Interceptors', () => {
             ) => AxiosResponse;
 
             const mockResponse: AxiosResponse = {
-                data: { success: true },
+                data: { id: 'topic-1' },
                 status: 200,
                 statusText: 'OK',
                 headers: {},
@@ -107,8 +115,10 @@ describe('Interceptors', () => {
             const mockError = {
                 status: 500,
                 response: {
+                    status: 500,
                     data: {
-                        content: 'Server Error'
+                        statusCode: 500,
+                        message: 'Server Error'
                     }
                 }
             };
@@ -122,7 +132,7 @@ describe('Interceptors', () => {
             expect(window.location.assign).toHaveBeenCalledWith('/error');
         });
 
-        it('should not redirect if error content is "Topic in progress"', async () => {
+        it('should not redirect when topic generation is in progress', async () => {
             setupInterceptors();
 
             // Get the response error handler
@@ -131,20 +141,47 @@ describe('Interceptors', () => {
             ) => Promise<never>;
 
             const mockError = {
-                status: 500,
+                status: 409,
                 response: {
+                    status: 409,
                     data: {
-                        content: 'Topic in progress'
+                        statusCode: 409,
+                        message: 'Topic generation in progress',
+                        code: 'TOPIC_GENERATION_IN_PROGRESS'
                     }
                 }
             };
 
-            vi.mocked(queryByError).mockReturnValue('unexpected');
+            await expect(errorHandler(mockError)).rejects.toEqual(mockError);
+
+            expect(queryByError).not.toHaveBeenCalled();
+            expect(localStorage.setItem).not.toHaveBeenCalled();
+            expect(window.location.assign).not.toHaveBeenCalled();
+        });
+
+        it('should not redirect when the authenticated user profile is missing', async () => {
+            setupInterceptors();
+
+            const errorHandler = vi.mocked(axiosInstance.interceptors.response.use).mock.calls[0][1] as (
+                error: any
+            ) => Promise<never>;
+
+            const mockError = {
+                status: 404,
+                response: {
+                    status: 404,
+                    data: {
+                        statusCode: 404,
+                        message: 'User profile not found',
+                        code: 'USER_NOT_FOUND'
+                    }
+                }
+            };
 
             await expect(errorHandler(mockError)).rejects.toEqual(mockError);
 
-            expect(queryByError).toHaveBeenCalledWith(500);
-            expect(localStorage.setItem).toHaveBeenCalledWith('error', 'unexpected');
+            expect(queryByError).not.toHaveBeenCalled();
+            expect(localStorage.setItem).not.toHaveBeenCalled();
             expect(window.location.assign).not.toHaveBeenCalled();
         });
 

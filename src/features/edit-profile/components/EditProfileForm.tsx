@@ -1,26 +1,31 @@
 import FormTextArea from "@/shared/components/form-textarea";
 import type {
   UserProfileInputDto,
-  UserProfileOutputDto,
+  UserProfileRequestDto,
 } from "@/types/UserProfile";
 import { Button } from "@chakra-ui/react";
 import { useState } from "react";
 
 interface EditProfileFormProps {
-  onSubmit: (data: Omit<UserProfileOutputDto, "userId">) => void;
+  onSubmit: (data: UserProfileRequestDto) => void;
   user?: UserProfileInputDto;
 }
 
 const EditProfileForm = ({ onSubmit, user }: EditProfileFormProps) => {
-  const [formData, setFormData] = useState<
-    Omit<UserProfileOutputDto, "userId">
-  >(
-    user || {
-      csLevel: "",
-      goals: "",
-      preferences: "",
-      topicsToAvoid: "",
-    }
+  const [formData, setFormData] = useState<UserProfileRequestDto>(
+    user
+      ? {
+          csLevel: user.csLevel,
+          goals: user.goals,
+          preferences: user.preferences,
+          topicsToAvoid: user.topicsToAvoid,
+        }
+      : {
+          csLevel: "",
+          goals: "",
+          preferences: "",
+          topicsToAvoid: "",
+        }
   );
 
   return (

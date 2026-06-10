@@ -1,8 +1,13 @@
 import axios from "axios";
+import { getApiError } from "./apiError";
 import { queryByError } from "./pathByError";
 
+export const buildApiBaseUrl = (baseUrl: string) => {
+  return `${baseUrl.replace(/\/+$/, "")}/api/v1`;
+};
+
 export const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_BACKEND_API_URL,
+  baseURL: buildApiBaseUrl(import.meta.env.VITE_BACKEND_API_URL ?? ""),
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -23,14 +28,20 @@ export const setupInterceptors = () => {
       return response;
     },
     (error) => {
-      const statusCode = error.response?.status ?? error.status ?? 500;
+      const apiError = getApiError(error);
+
+      if (
+        apiError.code === "TOPIC_GENERATION_IN_PROGRESS" ||
+        apiError.code === "USER_NOT_FOUND"
+      ) {
+        return Promise.reject(error);
+      }
+
+      const statusCode = apiError.statusCode ?? 500;
       const query = queryByError(statusCode);
-      const content = error.response?.data?.content;
 
       localStorage.setItem("error", query);
-      if (content !== "Topic in progress") {
-        window.location.assign("/error");
-      }
+      window.location.assign("/error");
 
       return Promise.reject(error);
     }

@@ -1,16 +1,14 @@
 import FormTextArea from "@/shared/components/form-textarea";
-import type { UserProfileOutputDto } from "@/types/UserProfile";
+import type { UserProfileRequestDto } from "@/types/UserProfile";
 import { Button } from "@chakra-ui/react";
 import { useState } from "react";
 
 interface ProfileCompleteFormProps {
-  onSubmit: (data: Omit<UserProfileOutputDto, "userId">) => void;
+  onSubmit: (data: UserProfileRequestDto) => void;
 }
 
 const ProfileCompleteForm = ({ onSubmit }: ProfileCompleteFormProps) => {
-  const [formData, setFormData] = useState<
-    Omit<UserProfileOutputDto, "userId">
-  >({
+  const [formData, setFormData] = useState<UserProfileRequestDto>({
     csLevel: "",
     goals: "",
     preferences: "",

@@ -8,22 +8,28 @@ import { Spinner } from "@chakra-ui/react";
 import { VscBracketError } from "react-icons/vsc";
 import { useAuth } from "@clerk/clerk-react";
 import type { Topic } from "@/types/Topic";
+import { getApiError } from "@/utils/apiError";
 
 const Topic = () => {
-  const { getToken } = useAuth();
+  const { getToken, isSignedIn } = useAuth();
 
   const {
     data: topic,
     isError,
     isLoading,
   } = useQuery({
-    queryKey: ["topics"],
+    queryKey: ["topics", isSignedIn ? "authenticated" : "public"],
     queryFn: async () => {
       const token = await getToken();
       const topicResponse = await getTopic(token);
-      return topicResponse.data.content as Topic;
+      return topicResponse.data;
     },
-    retry: 24,
+    retry: (failureCount, error) => {
+      return (
+        getApiError(error).code === "TOPIC_GENERATION_IN_PROGRESS" &&
+        failureCount < 24
+      );
+    },
     retryDelay: () => 5000,
   });
 

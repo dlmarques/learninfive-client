@@ -50,8 +50,6 @@ describe("Quiz", () => {
   it("stores and displays the first guest answer when storage is empty", async () => {
     mocks.answerQuiz.mockResolvedValue({
       data: {
-        success: true,
-        content: "Quiz answered correctly",
         correct: true,
       },
     });

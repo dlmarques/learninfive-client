@@ -6,6 +6,10 @@ import { useUser } from "@clerk/clerk-react";
 import Result from "./components/Result";
 import { findGuestQuizAttempt } from "./utils/guestQuizAttempts";
 
+type QuizAnswerResult = {
+  correct: boolean;
+};
+
 type QuizComponentProps = {
   /**
    * Stable key for anonymous replay lookup.
@@ -13,11 +17,7 @@ type QuizComponentProps = {
    */
   guestReplayId: string;
   quiz: TopicQuiz;
-  onAnswer: (answer: string) => Promise<{
-    success: boolean;
-    content: string;
-    correct: boolean;
-  }>;
+  onAnswer: (answer: string) => Promise<QuizAnswerResult | undefined>;
 };
 
 const QuizComponent = ({
@@ -105,11 +105,11 @@ const QuizComponent = ({
             onClick={async () => {
               setIsLoading(true);
               if (value) {
-                const result = await onAnswer(value);
+                const answerResult = await onAnswer(value);
                 setIsLoading(false);
 
-                if (result.success) {
-                  setResult(result.correct);
+                if (answerResult) {
+                  setResult(answerResult.correct);
                 }
               }
             }}

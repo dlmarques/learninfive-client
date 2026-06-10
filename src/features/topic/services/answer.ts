@@ -1,16 +1,17 @@
 import { axiosInstance } from "@/utils/interceptors";
 
-export const answerQuiz = (answer: string, topicId: string, token?: string) => {
-  return axiosInstance.post(
-    `topics/answer-quiz`,
-    {
-      answer,
-      topicId,
-    },
-    {
-      headers: {
-        Authorization: token && `Bearer ${token}`,
-      },
-    }
+export type AnswerQuizResponse = {
+  correct: boolean;
+};
+
+export const answerQuiz = (
+  answerId: string,
+  topicId: string,
+  token?: string
+) => {
+  return axiosInstance.post<AnswerQuizResponse>(
+    `topics/${topicId}/answers`,
+    { answerId },
+    token ? { headers: { Authorization: `Bearer ${token}` } } : undefined
   );
 };

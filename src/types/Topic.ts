@@ -5,7 +5,9 @@ export interface Topic {
   realWorldAnalogy: string;
   examples: TopicExample[];
   quiz: TopicQuiz;
-  date: Date;
+  date: string;
+  dayKey: string;
+  public: boolean;
 }
 
 export interface TopicExample {

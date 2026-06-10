@@ -1,11 +1,11 @@
-import type { UserProfileOutputDto } from "@/types/UserProfile";
+import type { UserProfileRequestDto } from "@/types/UserProfile";
 import { axiosInstance } from "@/utils/interceptors";
 
 export const editProfile = async (
-  data: UserProfileOutputDto,
+  data: UserProfileRequestDto,
   token: string
 ) => {
-  return axiosInstance.patch(`users/edit-profile`, data, {
+  return axiosInstance.patch("me/profile", data, {
     headers: { Authorization: `Bearer ${token}` },
   });
 };

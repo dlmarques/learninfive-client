@@ -17,7 +17,7 @@ const EditProfile = () => {
         throw new Error("Token not found");
       }
       const topicResponse = await getUserData(token);
-      return topicResponse.data.content as UserProfileInputDto;
+      return topicResponse.data as UserProfileInputDto;
     },
   });
 
